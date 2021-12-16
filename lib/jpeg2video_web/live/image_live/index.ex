@@ -41,7 +41,9 @@ defmodule Jpeg2videoWeb.ImageLive.Index do
   def handle_event("upload", _params, socket) do
     images = 
     consume_uploaded_entries(socket, :frame, fn %{path: path}, entry ->
-      file_name = Path.join([@frames_upload_path, "frame#{entry.ref}.jpeg"])
+      IO.inspect(entry)
+      file_name = Path.join([@frames_upload_path, entry.upload_ref, "frame#{entry.ref}.jpeg"])
+      File.mkdir(Path.join(@frames_upload_path, entry.upload_ref))
       File.cp!(path, file_name)
       file_name
     end)
@@ -49,18 +51,26 @@ defmodule Jpeg2videoWeb.ImageLive.Index do
   end
 
   def handle_event("convert", _params, socket) do
-    convert_to_avi(socket.assigns.frames)
-    {:noreply, redirect(socket, to: Routes.page_path(socket, :download))}
+    path = convert_to_avi(socket.assigns.frames)
+    {:noreply, redirect(socket, to: Routes.page_path(socket, :download, path: path))}
   end
 
   defp convert_to_avi(frames) do
+    path = 
+      frames
+      |> hd()
+      |> Path.dirname()
+
     frames
     |> length()
     |> (&(&1 / 60)).()
-    |> ffmpeg_command()
+    |> ffmpeg_command(path)
     |> System.shell()
+
+    File.rm_rf(Path.join(path, "*.jpeg"))
+    Path.join(path, "out.avi")
   end
 
-  defp ffmpeg_command(rate), do:
-    "ffmpeg -f image2 -r #{rate} -i #{@frames_upload_path}/frame%d.jpeg #{@frames_upload_path}/out.avi"
+  defp ffmpeg_command(rate, path), do:
+    "ffmpeg -f image2 -r #{rate} -i #{path}/frame%d.jpeg #{path}/out.avi"
 end
