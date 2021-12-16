@@ -9,6 +9,7 @@ defmodule Jpeg2video.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
+      releases: releases(), 
       aliases: aliases(),
       deps: deps()
     ]
@@ -44,6 +45,18 @@ defmodule Jpeg2video.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"}
+    ]
+  end
+
+  defp releases do
+    [
+      jpeg2video: [
+        applications: [
+          runtime_tools: :permanent
+        ],
+        include_executables_for: [:unix],
+        path: "dist"
+      ]
     ]
   end
 
