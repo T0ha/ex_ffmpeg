@@ -17,7 +17,8 @@ defmodule Jpeg2videoWeb.Router do
   scope "/", Jpeg2videoWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", ImageLive.Index, :index
+    get "/download", PageController, :download
   end
 
   # Other scopes may use custom stacks.

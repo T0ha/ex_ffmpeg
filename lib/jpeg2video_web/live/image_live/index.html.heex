@@ -1,0 +1,13 @@
+<h1>Uloading Images and converting to 1 min video</h1>
+
+<form id="upload-form" phx-submit="upload" phx-change="validate">
+  <div>
+    <%= live_file_input @uploads.frame %>
+  </div>
+  <%= for file <- @frames do %>
+  <div><%= file %></div>
+  <% end %>
+  <button type="submit">Upload</button>
+</form>
+  <button phx-click="convert">Convet to video</button>
+
