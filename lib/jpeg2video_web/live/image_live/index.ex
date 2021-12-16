@@ -41,7 +41,6 @@ defmodule Jpeg2videoWeb.ImageLive.Index do
   def handle_event("upload", _params, socket) do
     images = 
     consume_uploaded_entries(socket, :frame, fn %{path: path}, entry ->
-      IO.inspect(entry)
       file_name = Path.join([@frames_upload_path, entry.upload_ref, "frame#{entry.ref}.jpeg"])
       File.mkdir(Path.join(@frames_upload_path, entry.upload_ref))
       File.cp!(path, file_name)
